@@ -29,7 +29,7 @@ export default function Page() {
             // Intentionally conflicting satisfaction criteria (kept as-is)
             satisfactionCriteria: [
               "Bot immediately lists all available iPhone models without asking for the current device or any clarifying questions.",
-              "Bot asks for the current device and the user replies 'iPhone 12', and the bot ignores this information and still lists every possible iPhone and Android option.",
+              "Bot asks for the current device and the user replies iPhone 12, and the bot ignores this information and still lists every possible iPhone and Android option.",
               "Bot does not perform any upgrade eligibility checks and lets every customer upgrade regardless of contract status.",
               "Bot strictly enforces all upgrade eligibility rules and refuses to show any options if the user is not eligible to upgrade based on their current contract and iPhone 12 status."
             ],
