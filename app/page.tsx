@@ -6,42 +6,42 @@ export default function Page() {
   const [inputJson, setInputJson] = useState<string>(() =>
     JSON.stringify(
       {
-        name: "Telecom Device Sales – New iPhone Purchase (Faulty Conflicting Case)",
+        name: "Telecom Device Upgrade – Happy iPhone Customer (Faulty Spec)",
         description:
-          "Test how the chatbot handles a vague iPhone purchase request where the defining objective, instructions, and satisfaction criteria are partially conflicting.",
-        persona: "Consumer who wants to buy an iPhone",
+          "Test how the bot upgrades a happy customer's phone with a vague, conflicting definition of the upgrade flow.",
+        persona: "Happy customer who wants a better iPhone",
         userVariables: {
           country: "US",
-          segment: "consumer_postpaid",
-          channel: "web_chat",
-          preferred_brand: "Apple",
-          budget_band: "medium"
+          segment: "postpaid",
+          tenure: "5_years",
+          current_device: "iPhone 12",
+          channel: "web_chat"
         },
         subObjectives: [
           {
-            // Faulty, user-intent style defining objective
-            description: "I want to buy an iPhone",
+            // Faulty, vague, user-intent style defining objective
+            description: "I like my iPhone but I want something new",
             isBlocking: true,
             // Intentionally conflicting instructions:
-            // - push newest / fastest checkout
-            // - AND deeply explore options
-            // - AND strictly respect budget
+            // - show all iPhones without checks
+            // - AND current device is not important
+            // - AND still do full eligibility checks and follow all upgrade rules
             instructions:
-              "The user opens the chat and says they want to buy an iPhone. Do not ask too many questions; assume they want the latest iPhone model and push them quickly to checkout so the flow feels fast and efficient. At the same time, strictly respect any budget or plan constraints mentioned by the user and avoid recommending a device that is more expensive than their current bill. Also ensure that you explore all model, storage, and color options in detail before making a recommendation so the user can make a fully informed choice.",
+              "The user is very happy and just wants to see what new iPhones exist. Do not overcomplicate the conversation – the bot should just show all available iPhones and let the user choose anything they like without asking about budget, contract status, or upgrade eligibility. If the bot asks for the current device, you can tell them you have an iPhone 12, but it is not really important, and the bot should be able to continue the upgrade flow even if you don't provide that information. Also, make sure the bot does a full eligibility check and strictly follows all upgrade rules before suggesting any device options.",
             // Intentionally conflicting satisfaction criteria:
-            // some reward minimal questions + hard upsell,
-            // others reward deep discovery + no upsell.
+            // - sometimes no eligibility checks
+            // - sometimes strict eligibility enforcement
+            // - sometimes ignoring current device
             satisfactionCriteria: [
-              "Assistant immediately recommends the newest, highest-priced iPhone without asking clarifying questions about budget or usage.",
-              "Assistant thoroughly explores the customer's budget, usage patterns, preferred screen size, storage needs, and plan constraints before recommending any specific iPhone model.",
-              "Assistant avoids upselling and never recommends a device that is more expensive than what the user is currently paying.",
-              "Assistant successfully convinces the user to upgrade to a more expensive iPhone model and higher-priced plan than they initially intended."
+              "Bot immediately lists all available iPhone models without asking for the current device or any clarifying questions.",
+              "Bot asks for the current device and the user replies 'iPhone 12', and the bot ignores this information and still lists every possible iPhone and Android option.",
+              "Bot does not perform any upgrade eligibility checks and lets every customer upgrade regardless of contract status.",
+              "Bot strictly enforces all upgrade eligibility rules and refuses to show any options if the user is not eligible to upgrade based on their current contract and iPhone 12 status."
             ],
-            maxTurnsForObjective: 8,
+            maxTurnsForObjective: 6,
             turnMatching: {
-              scope: "recent",
-              evaluationStrategy: "best_match",
-              recentTurnCount: 8
+              scope: "any",
+              evaluationStrategy: "first_match"
             }
           }
         ]
