@@ -6,35 +6,42 @@ export default function Page() {
   const [inputJson, setInputJson] = useState<string>(() =>
     JSON.stringify(
       {
-        name: "Telecom Support – Vague Billing Dispute (Refined Objective)",
+        name: "Telecom Device Sales – New iPhone Purchase (Faulty Conflicting Case)",
         description:
-          "Validate that the chatbot collects sufficient context before explaining or resolving a vague billing dispute, and avoids premature assumptions.",
-        persona: "Postpaid telecom customer in Ireland",
+          "Test how the chatbot handles a vague iPhone purchase request where the defining objective, instructions, and satisfaction criteria are partially conflicting.",
+        persona: "Consumer who wants to buy an iPhone",
         userVariables: {
-          account_type: "postpaid",
-          billing_cycle: "monthly",
-          currency: "EUR",
-          country: "Ireland",
-          service_type: "mobile"
+          country: "US",
+          segment: "consumer_postpaid",
+          channel: "web_chat",
+          preferred_brand: "Apple",
+          budget_band: "medium"
         },
         subObjectives: [
           {
-            description:
-              "Validate that the agent gathers sufficient contextual information (billing period, charge amount, charge category, service type) before proposing any explanation or resolution for a vague billing dispute.",
+            // Faulty, user-intent style defining objective
+            description: "I want to buy an iPhone",
             isBlocking: true,
+            // Intentionally conflicting instructions:
+            // - push newest / fastest checkout
+            // - AND deeply explore options
+            // - AND strictly respect budget
             instructions:
-              "Treat the customer's request as intentionally vague. The assistant must first gather required context through targeted questions and must not propose a specific cause/resolution until enough details are collected.",
+              "The user opens the chat and says they want to buy an iPhone. Do not ask too many questions; assume they want the latest iPhone model and push them quickly to checkout so the flow feels fast and efficient. At the same time, strictly respect any budget or plan constraints mentioned by the user and avoid recommending a device that is more expensive than their current bill. Also ensure that you explore all model, storage, and color options in detail before making a recommendation so the user can make a fully informed choice.",
+            // Intentionally conflicting satisfaction criteria:
+            // some reward minimal questions + hard upsell,
+            // others reward deep discovery + no upsell.
             satisfactionCriteria: [
-              "Assistant requests missing contextual information required to assess the billing dispute (billing period/date range, charge amount, charge category, service type)",
-              "Assistant collects at least three key details from the customer before offering a specific explanation or resolution",
-              "Assistant does not propose a specific cause or resolution prior to collecting sufficient details",
-              "Assistant provides appropriate next steps or escalation if sufficient details cannot be collected or the issue requires account-level review"
+              "Assistant immediately recommends the newest, highest-priced iPhone without asking clarifying questions about budget or usage.",
+              "Assistant thoroughly explores the customer's budget, usage patterns, preferred screen size, storage needs, and plan constraints before recommending any specific iPhone model.",
+              "Assistant avoids upselling and never recommends a device that is more expensive than what the user is currently paying.",
+              "Assistant successfully convinces the user to upgrade to a more expensive iPhone model and higher-priced plan than they initially intended."
             ],
-            maxTurnsForObjective: 10,
+            maxTurnsForObjective: 8,
             turnMatching: {
               scope: "recent",
               evaluationStrategy: "best_match",
-              recentTurnCount: 10
+              recentTurnCount: 8
             }
           }
         ]
