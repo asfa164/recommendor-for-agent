@@ -2,38 +2,48 @@
 
 import { useState } from "react";
 
-const DEFAULT_INPUT_JSON = `{
-  "name": "Telecom Device Upgrade – Existing Customer iPhone Trade-In (Faulty Spec)",
-  "description": "Test how the bot handles an existing customer who wants to buy a new iPhone and trade in their old one, with a vague and conflicting definition of the upgrade flow.",
-  "persona": "Existing telecom customer who wants a new iPhone",
-  "userVariables": {
-    "country": "US",
-    "segment": "postpaid",
-    "tenure": "5_years",
-    "current_device": "iPhone 12",
-    "channel": "web_chat"
-  },
-  "subObjectives": [
-    {
-      "description": "Validate that the chatbot guides an existing telecom customer who wants to buy a new iPhone and trade in their old device through the end-to-end order of an iPhone 17 Pro Max with 500 GB storage in black, and correctly acknowledges the order request.",
-      "isBlocking": true,
-      "instructions": "The user is very happy and just wants to see what new iPhones exist. Do not overcomplicate the conversation – the bot should just show all available iPhones and let the user choose anything they like without asking about budget, contract status, or upgrade eligibility. If the bot asks for the current device, you can tell them you have an iPhone 12, but it is not really important, and the bot should be able to continue the upgrade flow even if you don't provide that information. Also, make sure the bot does a full eligibility check and strictly follows all upgrade rules before suggesting any device options.",
-      "satisfactionCriteria": [
-        "Bot immediately lists all available iPhone models without asking for the current device or any clarifying questions.",
-        "Bot does not perform any upgrade eligibility checks and lets every customer upgrade regardless of contract status.",
-        "Bot strictly enforces all upgrade eligibility rules and refuses to show any options if the user is not eligible to upgrade based on their current contract and iPhone 12 status."
-      ],
-      "maxTurnsForObjective": 6,
-      "turnMatching": {
-        "scope": "any",
-        "evaluationStrategy": "first_match"
-      }
-    }
-  ]
-}`;
-
 export default function Page() {
-  const [inputJson, setInputJson] = useState<string>(() => DEFAULT_INPUT_JSON);
+  const [inputJson, setInputJson] = useState<string>(() =>
+    JSON.stringify(
+      {
+        name: "Telecom Support – Vague Billing Dispute (Refined Objective)",
+        description:
+          "Validate that the chatbot collects sufficient context before explaining or resolving a vague billing dispute, and avoids premature assumptions.",
+        persona: "Postpaid telecom customer in Ireland",
+        userVariables: {
+          account_type: "postpaid",
+          billing_cycle: "monthly",
+          currency: "EUR",
+          country: "Ireland",
+          service_type: "mobile"
+        },
+        subObjectives: [
+          {
+            description:
+              "Validate that the agent gathers sufficient contextual information (billing period, charge amount, charge category, service type) before proposing any explanation or resolution for a vague billing dispute.",
+            isBlocking: true,
+            instructions:
+              "Treat the customer's request as intentionally vague. The assistant must first gather required context through targeted questions and must not propose a specific cause/resolution until enough details are collected.",
+            satisfactionCriteria: [
+              "Assistant requests missing contextual information required to assess the billing dispute (billing period/date range, charge amount, charge category, service type)",
+              "Assistant collects at least three key details from the customer before offering a specific explanation or resolution",
+              "Assistant does not propose a specific cause or resolution prior to collecting sufficient details",
+              "Assistant provides appropriate next steps or escalation if sufficient details cannot be collected or the issue requires account-level review"
+            ],
+            maxTurnsForObjective: 10,
+            turnMatching: {
+              scope: "recent",
+              evaluationStrategy: "best_match",
+              recentTurnCount: 10
+            }
+          }
+        ]
+      },
+      null,
+      2
+    )
+  );
+
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -45,8 +55,8 @@ export default function Page() {
     let payload: any;
     try {
       payload = JSON.parse(inputJson);
-    } catch (e: any) {
-      setError(e?.message || "Input is not valid JSON.");
+    } catch {
+      setError("Input is not valid JSON.");
       return;
     }
 
